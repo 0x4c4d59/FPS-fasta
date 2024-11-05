@@ -1,0 +1,7 @@
+/.idea/
+/.venv
+FileTreeGenerator.py
+bashcode.md
+main.spec
+/build/
+/dist/
