@@ -25,6 +25,16 @@ class FastaProcessorApp:
         # 创建模块页面
         self.create_tabs()
 
+        # 作者信息标签（左下角）
+        author_label = tk.Label(
+            self.root,
+            text="by  0x4c4d59",
+            anchor="w",
+            fg="gray",  # 字体颜色
+            font=("Arial", 8)  # 字体和字号
+        )
+        author_label.pack(side="right", anchor="sw", padx=10, pady=5)
+
     def create_tabs(self):
         # ExcelToFasta 页面
         self.excel_to_fasta_tab = ttk.Frame(self.notebook)
@@ -47,33 +57,47 @@ class FastaProcessorApp:
         self.create_seq_to_fasta_tab()
 
     def create_excel_to_fasta_tab(self):
+
+        # 创建一个居中的 frame
+        frame = ttk.Frame(self.excel_to_fasta_tab)
+        frame.place(relx=0.5, rely=0.5, anchor="center")
+
         # 定义输入框
-        self.excel_to_fasta_input["input"], self.excel_to_fasta_input["output"] = self.create_file_input_widgets(self.excel_to_fasta_tab)
+        self.excel_to_fasta_input["input"], self.excel_to_fasta_input["output"] = self.create_file_input_widgets(frame)
 
         # 额外输入框：ID列 和 序列列
-        tk.Label(self.excel_to_fasta_tab, text="Excel ID 列名:").grid(row=2, column=0, padx=10, pady=5)
-        self.id_column_entry = tk.Entry(self.excel_to_fasta_tab, width=40)
+        tk.Label(frame, text="Excel ID 列名:").grid(row=2, column=0, padx=10, pady=5)
+        self.id_column_entry = tk.Entry(frame, width=40)
         self.id_column_entry.grid(row=2, column=1, padx=10, pady=5)
 
-        tk.Label(self.excel_to_fasta_tab, text="Excel 序列列名:").grid(row=3, column=0, padx=10, pady=5)
-        self.sequence_column_entry = tk.Entry(self.excel_to_fasta_tab, width=40)
+        tk.Label(frame, text="Excel 序列列名:").grid(row=3, column=0, padx=10, pady=5)
+        self.sequence_column_entry = tk.Entry(frame, width=40)
         self.sequence_column_entry.grid(row=3, column=1, padx=10, pady=5)
 
     def create_fasta_to_excel_tab(self):
-        self.fasta_to_excel_input["input"], self.fasta_to_excel_input["output"] = self.create_file_input_widgets(self.fasta_to_excel_tab)
+        frame = ttk.Frame(self.fasta_to_excel_tab)
+        frame.place(relx=0.5, rely=0.5, anchor="center")
+
+        self.fasta_to_excel_input["input"], self.fasta_to_excel_input["output"] = self.create_file_input_widgets(frame)
 
     def create_label_fasta_end_tab(self):
-        self.label_fasta_end_input["input"], self.label_fasta_end_input["output"] = self.create_file_input_widgets(self.label_fasta_end_tab)
+        frame = ttk.Frame(self.label_fasta_end_tab)
+        frame.place(relx=0.5, rely=0.5, anchor="center")
 
-        tk.Label(self.label_fasta_end_tab, text="自定义字符串:").grid(row=2, column=0, padx=10, pady=5)
-        self.custom_string_entry = tk.Entry(self.label_fasta_end_tab, width=40)
+        self.label_fasta_end_input["input"], self.label_fasta_end_input["output"] = self.create_file_input_widgets(frame)
+
+        tk.Label(frame, text="自定义字符串:").grid(row=2, column=0, padx=10, pady=5)
+        self.custom_string_entry = tk.Entry(frame, width=40)
         self.custom_string_entry.grid(row=2, column=1, padx=10, pady=5)
 
     def create_seq_to_fasta_tab(self):
-        self.seq_to_fasta_input["input"], self.seq_to_fasta_input["output"] = self.create_file_input_widgets(self.seq_to_fasta_tab)
+        frame = ttk.Frame(self.seq_to_fasta_tab)
+        frame.place(relx=0.5, rely=0.5, anchor="center")
 
-        tk.Label(self.seq_to_fasta_tab, text="每个FASTA文件包含的序列数量:").grid(row=2, column=0, padx=10, pady=5)
-        self.seq_count_entry = tk.Entry(self.seq_to_fasta_tab, width=40)
+        self.seq_to_fasta_input["input"], self.seq_to_fasta_input["output"] = self.create_file_input_widgets_folder(frame)
+
+        tk.Label(frame, text="每个FASTA文件包含的序列数量:").grid(row=2, column=0, padx=10, pady=5)
+        self.seq_count_entry = tk.Entry(frame, width=40)
         self.seq_count_entry.grid(row=2, column=1, padx=10, pady=5)
 
     def create_file_input_widgets(self, parent):
@@ -82,18 +106,44 @@ class FastaProcessorApp:
         tk.Label(parent, text="输入文件路径:").grid(row=0, column=0, padx=10, pady=5)
         input_entry = tk.Entry(parent, width=40)
         input_entry.grid(row=0, column=1, padx=10, pady=5)
-        tk.Button(parent, text="选择文件", command=lambda: self.select_file(input_entry)).grid(row=0, column=2, padx=10, pady=5)
+        tk.Button(parent, text="📂", command=lambda: self.select_file(input_entry)).grid(row=0, column=2, padx=10, pady=5)
 
         # 输出文件
         tk.Label(parent, text="输出文件路径:").grid(row=1, column=0, padx=10, pady=5)
         output_entry = tk.Entry(parent, width=40)
         output_entry.grid(row=1, column=1, padx=10, pady=5)
-        tk.Button(parent, text="选择文件", command=lambda: self.select_file(output_entry)).grid(row=1, column=2, padx=10, pady=5)
+        tk.Button(parent, text="📂", command=lambda: self.select_folder(output_entry)).grid(row=1, column=2, padx=10, pady=5)
 
         # 处理按钮
-        tk.Button(parent, text="开始处理", command=self.process_file).grid(row=4, column=0, columnspan=3, pady=20)
+        tk.Button(parent, text="GO ▶", command=self.process_file).grid(row=4, column=0, columnspan=3, pady=20)
 
         return input_entry, output_entry
+
+    def create_file_input_widgets_folder(self, parent):
+        """创建输入文件和输出文件选择控件"""
+        # 输入文件
+        tk.Label(parent, text="输入文件路径:").grid(row=0, column=0, padx=10, pady=5)
+        input_entry = tk.Entry(parent, width=40)
+        input_entry.grid(row=0, column=1, padx=10, pady=5)
+        tk.Button(parent, text="📂", command=lambda: self.select_folder(input_entry)).grid(row=0, column=2, padx=10, pady=5)
+
+        # 输出文件
+        tk.Label(parent, text="输出文件路径:").grid(row=1, column=0, padx=10, pady=5)
+        output_entry = tk.Entry(parent, width=40)
+        output_entry.grid(row=1, column=1, padx=10, pady=5)
+        tk.Button(parent, text="📂", command=lambda: self.select_folder(output_entry)).grid(row=1, column=2, padx=10, pady=5)
+
+        # 处理按钮
+        tk.Button(parent, text="GO ▶", command=self.process_file).grid(row=4, column=0, columnspan=4, pady=20)
+
+        return input_entry, output_entry
+
+    def select_folder(self, entry_widget):
+        """选择文件夹路径"""
+        folder = filedialog.askdirectory()
+        if folder:
+            entry_widget.delete(0, tk.END)
+            entry_widget.insert(0, folder)
 
     def select_file(self, entry_widget):
         """选择文件路径"""
@@ -145,5 +195,8 @@ class FastaProcessorApp:
 
 if __name__ == "__main__":
     root = tk.Tk()
+    root.title("FPS-fasta")          # 窗口标题
+    root.geometry("800x300")         # 给窗口设置一个初始大小（宽800，高600）
+
     app = FastaProcessorApp(root)
     root.mainloop()

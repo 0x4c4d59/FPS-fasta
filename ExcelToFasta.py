@@ -14,9 +14,3 @@ def excel_to_fasta(input_file, output_file, id_column, sequence_column):
             f.write(f'>{identifier}\n{sequence}\n')
 
 
-# 参数定义
-# input_file = 'C:/Users/Rivarez/Desktop/270株多生态系统去冗余分菌汇总表.xlsx'  # 输入的Excel文件名
-# output_file = 'C:/Users/Rivarez/Desktop/example.fasta'  # 输出的FASTA文件名
-# id_column = 'full_index'  # ID列名
-# sequence_column = 'sequence'  # 序列列名
-# excel_to_fasta(input_file, output_file, id_column, sequence_column)
