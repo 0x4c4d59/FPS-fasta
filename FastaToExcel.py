@@ -3,26 +3,32 @@
 import pandas as pd
 
 
-def fasta_to_excel(fasta_file, output_file):
-    # 初始化列表，用于存储数据
+def fasta_to_excel(fasta_file, output_file, log_cb=None):
+    """将 FASTA 文件转换为 Excel。
+
+    Args:
+        fasta_file: 输入的 FASTA 文件路径
+        output_file: 输出的 Excel 文件路径
+        log_cb: 可选，日志回调函数 log_cb(msg: str)
+    """
+    if log_cb:
+        log_cb(f"正在读取 FASTA 文件: {fasta_file}")
+
     names = []
     sequences = []
 
-    # 打开FASTA文件并读取
-    with open(fasta_file, 'r') as file:
+    with open(fasta_file, 'r', encoding='utf-8') as file:
         name = None
         sequence = ""
         for line in file:
             line = line.strip()
             if line.startswith(">"):
-                # 如果是名称行，保存当前序列并准备处理新的序列
                 if name:
                     names.append(name)
                     sequences.append(sequence)
-                name = line[1:]  # 去掉">"符号
+                name = line[1:]
                 sequence = ""
             else:
-                # 否则是序列行，拼接到sequence
                 sequence += line
 
         # 处理最后一个序列
@@ -30,15 +36,21 @@ def fasta_to_excel(fasta_file, output_file):
             names.append(name)
             sequences.append(sequence)
 
-    # 创建DataFrame
+    if log_cb:
+        log_cb(f"解析到 {len(names)} 条序列")
+
+    if not names:
+        raise ValueError("未能从 FASTA 文件中解析到任何有效序列")
+
     df = pd.DataFrame({
         'Name': names,
         'Sequence': sequences
     })
 
-    # 将DataFrame保存为Excel文件
+    if log_cb:
+        log_cb(f"正在写入 Excel 文件: {output_file}")
+
     df.to_excel(output_file, index=False)
 
-
-# # 使用示例
-# fasta_to_excel('input.fasta', 'output.xlsx')
+    if log_cb:
+        log_cb(f"完成：成功导出 {len(names)} 条序列到 {output_file}")
